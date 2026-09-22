@@ -6,6 +6,7 @@ import {
   Wrench,
   FolderGit2,
   Briefcase,
+  GraduationCap,
   Palette,
   Save,
   Trash2,
@@ -21,6 +22,7 @@ import { useToast } from '../components/Toast';
 import DynamicSkillInput from '../components/DynamicSkillInput';
 import ProjectItemForm from '../components/ProjectItemForm';
 import ExperienceItemForm from '../components/ExperienceItemForm';
+import EducationItemForm from '../components/EducationItemForm';
 import ThemeSelector from '../components/ThemeSelector';
 
 const EditPortfolioPage = () => {
@@ -52,6 +54,7 @@ const EditPortfolioPage = () => {
     skills: [],
     projects: [],
     experience: [],
+    education: [],
     theme: 'modern-dark',
     resumeUrl: '',
   });
@@ -80,6 +83,7 @@ const EditPortfolioPage = () => {
             skills: Array.isArray(data.skills) ? data.skills : [],
             projects: Array.isArray(data.projects) ? data.projects : [],
             experience: Array.isArray(data.experience) ? data.experience : [],
+            education: Array.isArray(data.education) ? data.education : [],
             theme: data.theme || 'modern-dark',
             resumeUrl: data.resumeUrl || '',
           });
@@ -239,6 +243,54 @@ const EditPortfolioPage = () => {
     });
   };
 
+  // Education Handlers
+  const handleAddEducation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      education: [
+        ...(prev.education || []),
+        { institution: '', degree: '', fieldOfStudy: '', duration: '', description: '' },
+      ],
+    }));
+  };
+
+  const handleUpdateEducation = (index, updatedEdu) => {
+    setFormData((prev) => {
+      const copy = [...(prev.education || [])];
+      copy[index] = updatedEdu;
+      return { ...prev, education: copy };
+    });
+  };
+
+  const handleRemoveEducation = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      education: (prev.education || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleMoveEduUp = (index) => {
+    if (index === 0) return;
+    setFormData((prev) => {
+      const copy = [...(prev.education || [])];
+      const temp = copy[index - 1];
+      copy[index - 1] = copy[index];
+      copy[index] = temp;
+      return { ...prev, education: copy };
+    });
+  };
+
+  const handleMoveEduDown = (index) => {
+    setFormData((prev) => {
+      if (index === (prev.education || []).length - 1) return prev;
+      const copy = [...(prev.education || [])];
+      const temp = copy[index + 1];
+      copy[index + 1] = copy[index];
+      copy[index] = temp;
+      return { ...prev, education: copy };
+    });
+  };
+
   // Save changes via PUT API
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -308,7 +360,8 @@ const EditPortfolioPage = () => {
     { id: 'skills', label: '3. Skills', icon: Wrench },
     { id: 'projects', label: '4. Projects', icon: FolderGit2, count: formData.projects.length },
     { id: 'experience', label: '5. Experience', icon: Briefcase, count: formData.experience.length },
-    { id: 'theme', label: '6. Theme & Resume', icon: Palette },
+    { id: 'education', label: '6. Education', icon: GraduationCap, count: (formData.education || []).length },
+    { id: 'theme', label: '7. Theme & Resume', icon: Palette },
   ];
 
   return (
@@ -472,12 +525,16 @@ const EditPortfolioPage = () => {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Bio / Summary</label>
+                  <label className="form-label">
+                    Bio / Summary <span className="req">*</span>
+                  </label>
                   <textarea
                     className="form-control"
                     rows={4}
                     value={formData.bio}
                     onChange={(e) => handleFieldChange('bio', e.target.value)}
+                    required
+                    id="edit-bio"
                   />
                 </div>
               </div>
@@ -649,7 +706,69 @@ const EditPortfolioPage = () => {
               </div>
             )}
 
-            {/* TAB 6: Theme & Resume */}
+            {/* TAB 6: Education */}
+            {activeTab === 'education' && (
+              <div className="animate-fade-in">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <GraduationCap size={20} color="var(--primary)" />
+                      Education & Degrees ({(formData.education || []).length})
+                    </h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      Update your academic background, degrees, and certificates.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleAddEducation}
+                    id="btn-add-edu-edit"
+                  >
+                    <span>+ Add Education</span>
+                  </button>
+                </div>
+
+                {formData.education && formData.education.length > 0 ? (
+                  formData.education.map((edu, idx) => (
+                    <EducationItemForm
+                      key={idx}
+                      education={edu}
+                      index={idx}
+                      total={formData.education.length}
+                      onChange={handleUpdateEducation}
+                      onRemove={handleRemoveEducation}
+                      onMoveUp={handleMoveEduUp}
+                      onMoveDown={handleMoveEduDown}
+                    />
+                  ))
+                ) : (
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: '16px',
+                      border: '1px dashed var(--border-color)',
+                      padding: '2.5rem 1.5rem',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                      No education entries added yet.
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={handleAddEducation}
+                    >
+                      <span>+ Add First Education Entry</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 7: Theme & Resume */}
             {activeTab === 'theme' && (
               <div className="animate-fade-in">
                 <ThemeSelector

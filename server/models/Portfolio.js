@@ -6,8 +6,8 @@ const { getStoreMode } = require('../config/db');
 const ProjectSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Project name is required'],
     trim: true,
+    default: '',
   },
   description: {
     type: String,
@@ -34,13 +34,39 @@ const ProjectSchema = new mongoose.Schema({
 const ExperienceSchema = new mongoose.Schema({
   company: {
     type: String,
-    required: [true, 'Company name is required'],
     trim: true,
+    default: '',
   },
   role: {
     type: String,
-    required: [true, 'Role is required'],
     trim: true,
+    default: '',
+  },
+  duration: {
+    type: String,
+    trim: true,
+  },
+  description: {
+    type: String,
+    trim: true,
+  },
+}, { _id: true });
+
+const EducationSchema = new mongoose.Schema({
+  institution: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  degree: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+  fieldOfStudy: {
+    type: String,
+    trim: true,
+    default: '',
   },
   duration: {
     type: String,
@@ -77,6 +103,7 @@ const PortfolioSchema = new mongoose.Schema({
   bio: {
     type: String,
     trim: true,
+    default: '',
   },
   profileImage: {
     type: String,
@@ -116,6 +143,7 @@ const PortfolioSchema = new mongoose.Schema({
   }],
   projects: [ProjectSchema],
   experience: [ExperienceSchema],
+  education: [EducationSchema],
   theme: {
     type: String,
     enum: ['modern-dark', 'minimal-light', 'cyberpunk', 'glassmorphism', 'nordic-forest'],
@@ -210,17 +238,57 @@ class MemoryQuery {
 class UnifiedPortfolio {
   constructor(data) {
     this.data = {
-      _id: data._id || 'pf_' + Date.now() + Math.random().toString(36).substring(2, 7),
       ...data,
       views: data.views || 0,
       createdAt: data.createdAt || new Date().toISOString(),
       updatedAt: data.updatedAt || new Date().toISOString(),
     };
+
+    if (getStoreMode()) {
+      if (!this.data._id) {
+        this.data._id = 'pf_' + Date.now() + Math.random().toString(36).substring(2, 7);
+      }
+    } else {
+      if (this.data._id && (!mongoose.Types.ObjectId.isValid(this.data._id) || String(this.data._id).startsWith('pf_'))) {
+        delete this.data._id;
+      }
+    }
   }
 
   async save() {
     if (!getStoreMode()) {
-      const doc = new MongooseModel(this.data);
+      const docData = { ...this.data };
+      if (docData._id && (!mongoose.Types.ObjectId.isValid(docData._id) || String(docData._id).startsWith('pf_'))) {
+        delete docData._id;
+      }
+      if (Array.isArray(docData.projects)) {
+        docData.projects = docData.projects.map((p) => {
+          const pCopy = { ...p };
+          if (pCopy._id && (!mongoose.Types.ObjectId.isValid(pCopy._id) || String(pCopy._id).startsWith('pf_'))) {
+            delete pCopy._id;
+          }
+          return pCopy;
+        });
+      }
+      if (Array.isArray(docData.experience)) {
+        docData.experience = docData.experience.map((e) => {
+          const eCopy = { ...e };
+          if (eCopy._id && (!mongoose.Types.ObjectId.isValid(eCopy._id) || String(eCopy._id).startsWith('pf_'))) {
+            delete eCopy._id;
+          }
+          return eCopy;
+        });
+      }
+      if (Array.isArray(docData.education)) {
+        docData.education = docData.education.map((ed) => {
+          const edCopy = { ...ed };
+          if (edCopy._id && (!mongoose.Types.ObjectId.isValid(edCopy._id) || String(edCopy._id).startsWith('pf_'))) {
+            delete edCopy._id;
+          }
+          return edCopy;
+        });
+      }
+      const doc = new MongooseModel(docData);
       return await doc.save();
     }
     const items = loadMemoryData();
@@ -313,7 +381,14 @@ class UnifiedPortfolio {
 
   static async insertMany(docs) {
     if (!getStoreMode()) {
-      return await MongooseModel.insertMany(docs);
+      const sanitizedDocs = docs.map((d) => {
+        const copy = { ...d };
+        if (copy._id && (!mongoose.Types.ObjectId.isValid(copy._id) || String(copy._id).startsWith('pf_'))) {
+          delete copy._id;
+        }
+        return copy;
+      });
+      return await MongooseModel.insertMany(sanitizedDocs);
     }
     const items = loadMemoryData();
     const formatted = docs.map((d) => ({

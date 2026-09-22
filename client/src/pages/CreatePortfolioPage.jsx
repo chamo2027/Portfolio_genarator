@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User,
@@ -6,6 +6,7 @@ import {
   Wrench,
   FolderGit2,
   Briefcase,
+  GraduationCap,
   Palette,
   Eye,
   Send,
@@ -15,6 +16,7 @@ import {
   Loader2,
   Sparkles,
   Upload,
+  Info,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { portfolioAPI } from '../services/api';
@@ -22,6 +24,7 @@ import { useToast } from '../components/Toast';
 import DynamicSkillInput from '../components/DynamicSkillInput';
 import ProjectItemForm from '../components/ProjectItemForm';
 import ExperienceItemForm from '../components/ExperienceItemForm';
+import EducationItemForm from '../components/EducationItemForm';
 import ThemeSelector from '../components/ThemeSelector';
 
 const INITIAL_FORM = {
@@ -38,38 +41,57 @@ const INITIAL_FORM = {
     twitter: '',
     location: '',
   },
-  skills: ['React', 'Node.js', 'JavaScript', 'MongoDB', 'Git'],
-  projects: [
-    {
-      name: 'E-Commerce Platform',
-      description: 'Full featured online store with Stripe payment integration, cart state management, and real-time inventory tracking.',
-      techStack: ['React', 'Node.js', 'Express', 'MongoDB'],
-      githubLink: 'https://github.com/developer/ecommerce-shop',
-      liveDemo: 'https://demo-ecommerce.example.com',
-      image: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=600&q=80',
-    },
-  ],
-  experience: [
-    {
-      company: 'Tech Solutions Inc.',
-      role: 'Full Stack Developer',
-      duration: '2022 - Present',
-      description: 'Developed responsive frontend applications and designed REST APIs serving over 50,000 active users.',
-    },
-  ],
+  skills: [],
+  projects: [],
+  experience: [],
+  education: [],
   theme: 'modern-dark',
   resumeUrl: '',
+};
+
+const EXAMPLE_PROJECT_TEMPLATE = {
+  name: 'E-Commerce Cloud Platform',
+  description: 'Full featured online store with Stripe payment integration, cart state management, and real-time inventory tracking.',
+  techStack: ['React', 'Node.js', 'Express', 'MongoDB'],
+  githubLink: 'https://github.com/developer/ecommerce-shop',
+  liveDemo: 'https://demo-ecommerce.example.com',
+  image: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=600&q=80',
+};
+
+const EXAMPLE_EXPERIENCE_TEMPLATE = {
+  company: 'Tech Solutions Inc.',
+  role: 'Full Stack Developer',
+  duration: '2022 - Present',
+  description: 'Developed responsive frontend applications and designed REST APIs serving over 50,000 active users.',
+};
+
+const EXAMPLE_EDUCATION_TEMPLATE = {
+  institution: 'University of California, Berkeley',
+  degree: 'Bachelor of Science',
+  fieldOfStudy: 'Computer Science',
+  duration: '2019 - 2023',
+  description: 'Graduated with Honors. Relevant Coursework: Data Structures, Algorithms, Distributed Systems, Cloud Architecture.',
 };
 
 const CreatePortfolioPage = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const lastCheckedUsernameRef = useRef('');
 
   const [formData, setFormData] = useState(() => {
     const savedDraft = sessionStorage.getItem('devfolio_draft');
     if (savedDraft) {
       try {
-        return JSON.parse(savedDraft);
+        const parsed = JSON.parse(savedDraft);
+        // Ensure defaults if previous draft had obsolete structure
+        return {
+          ...INITIAL_FORM,
+          ...parsed,
+          skills: Array.isArray(parsed.skills) ? parsed.skills : [],
+          projects: Array.isArray(parsed.projects) ? parsed.projects : [],
+          experience: Array.isArray(parsed.experience) ? parsed.experience : [],
+          education: Array.isArray(parsed.education) ? parsed.education : [],
+        };
       } catch (e) {
         return INITIAL_FORM;
       }
@@ -88,11 +110,12 @@ const CreatePortfolioPage = () => {
     sessionStorage.setItem('devfolio_draft', JSON.stringify(formData));
   }, [formData]);
 
-  // Debounced username availability check
+  // Debounced username availability check with popup notification
   useEffect(() => {
     const username = formData.username.trim().toLowerCase();
     if (!username || username.length < 3) {
       setUsernameStatus({ checking: false, available: null, message: '' });
+      lastCheckedUsernameRef.current = '';
       return;
     }
 
@@ -114,13 +137,23 @@ const CreatePortfolioPage = () => {
           available: res.available,
           message: res.message,
         });
+
+        // Trigger top-up toast message when username is verified
+        if (lastCheckedUsernameRef.current !== username) {
+          lastCheckedUsernameRef.current = username;
+          if (res.available) {
+            addToast(`Username "${username}" is available! 🎉`, 'success');
+          } else {
+            addToast(res.message || `Username "${username}" is taken.`, 'error');
+          }
+        }
       } catch (err) {
         setUsernameStatus({ checking: false, available: null, message: 'Error checking username' });
       }
     }, 450);
 
     return () => clearTimeout(timer);
-  }, [formData.username]);
+  }, [formData.username, addToast]);
 
   // Handle simple top-level field update
   const handleFieldChange = (field, value) => {
@@ -184,6 +217,14 @@ const CreatePortfolioPage = () => {
     }));
   };
 
+  const handleUseExampleProject = () => {
+    setFormData((prev) => ({
+      ...prev,
+      projects: [...prev.projects, { ...EXAMPLE_PROJECT_TEMPLATE }],
+    }));
+    addToast('Example project template added! You can now customize it.', 'info');
+  };
+
   const handleUpdateProject = (index, updatedProject) => {
     setFormData((prev) => {
       const newProjects = [...prev.projects];
@@ -232,6 +273,14 @@ const CreatePortfolioPage = () => {
     }));
   };
 
+  const handleUseExampleExperience = () => {
+    setFormData((prev) => ({
+      ...prev,
+      experience: [...prev.experience, { ...EXAMPLE_EXPERIENCE_TEMPLATE }],
+    }));
+    addToast('Example experience template added! You can now customize it.', 'info');
+  };
+
   const handleUpdateExperience = (index, updatedExp) => {
     setFormData((prev) => {
       const newExp = [...prev.experience];
@@ -269,21 +318,125 @@ const CreatePortfolioPage = () => {
     });
   };
 
-  // Validate form
+  // Dynamic Education Handlers
+  const handleAddEducation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      education: [
+        ...(prev.education || []),
+        { institution: '', degree: '', fieldOfStudy: '', duration: '', description: '' },
+      ],
+    }));
+  };
+
+  const handleUseExampleEducation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      education: [...(prev.education || []), { ...EXAMPLE_EDUCATION_TEMPLATE }],
+    }));
+    addToast('Example education template added! You can now customize it.', 'info');
+  };
+
+  const handleUpdateEducation = (index, updatedEdu) => {
+    setFormData((prev) => {
+      const newEdu = [...(prev.education || [])];
+      newEdu[index] = updatedEdu;
+      return { ...prev, education: newEdu };
+    });
+  };
+
+  const handleRemoveEducation = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      education: (prev.education || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleMoveEduUp = (index) => {
+    if (index === 0) return;
+    setFormData((prev) => {
+      const copy = [...(prev.education || [])];
+      const temp = copy[index - 1];
+      copy[index - 1] = copy[index];
+      copy[index] = temp;
+      return { ...prev, education: copy };
+    });
+  };
+
+  const handleMoveEduDown = (index) => {
+    setFormData((prev) => {
+      if (index === (prev.education || []).length - 1) return prev;
+      const copy = [...(prev.education || [])];
+      const temp = copy[index + 1];
+      copy[index + 1] = copy[index];
+      copy[index] = temp;
+      return { ...prev, education: copy };
+    });
+  };
+
+  // Step Completion Visual Indicators
+  const isPersonalComplete = Boolean(
+    formData.username.trim().length >= 3 &&
+    /^[a-z0-9-_]+$/.test(formData.username.trim().toLowerCase()) &&
+    formData.fullName.trim()
+  );
+
+  const isContactComplete = Boolean(
+    formData.contact.email.trim() &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact.email.trim())
+  );
+
+  const isSkillsComplete = formData.skills.length > 0;
+
+  const isProjectsComplete =
+    formData.projects.length > 0 &&
+    formData.projects.some((p) => p.name && p.name.trim().length > 0);
+
+  const isExperienceComplete =
+    formData.experience.length > 0 &&
+    formData.experience.some(
+      (e) => e.company && e.company.trim().length > 0
+    );
+
+  const isEducationComplete =
+    Array.isArray(formData.education) &&
+    formData.education.length > 0 &&
+    formData.education.some(
+      (e) => e.institution && e.institution.trim().length > 0
+    );
+
+  const isThemeComplete = Boolean(formData.theme);
+
+  // Validate form before submission
   const validateForm = () => {
     if (!formData.username.trim()) {
       addToast('Please provide a unique username for your portfolio URL', 'error');
       setActiveTab('personal');
       return false;
     }
+    if (formData.username.trim().length < 3) {
+      addToast('Username must be at least 3 characters', 'error');
+      setActiveTab('personal');
+      return false;
+    }
+    if (!/^[a-z0-9-_]+$/.test(formData.username.trim().toLowerCase())) {
+      addToast('Username can only contain alphanumeric characters, hyphens, and underscores', 'error');
+      setActiveTab('personal');
+      return false;
+    }
     if (usernameStatus.available === false) {
-      addToast('Username is taken or invalid. Please choose another username.', 'error');
+      addToast('This username is already taken. Please choose another one.', 'error');
       setActiveTab('personal');
       return false;
     }
     if (!formData.fullName.trim()) {
       addToast('Please provide your Full Name', 'error');
       setActiveTab('personal');
+      return false;
+    }
+    if (formData.contact.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact.email.trim())) {
+      addToast('Please provide a valid contact email address', 'error');
+      setActiveTab('contact');
       return false;
     }
     return true;
@@ -307,7 +460,24 @@ const CreatePortfolioPage = () => {
 
     setIsSubmitting(true);
     try {
-      const res = await portfolioAPI.createPortfolio(formData);
+      const cleanedProjects = formData.projects.filter(
+        (p) => p && (p.name?.trim() || p.description?.trim() || p.githubLink?.trim() || p.liveDemo?.trim())
+      );
+      const cleanedExperience = formData.experience.filter(
+        (e) => e && (e.company?.trim() || e.role?.trim() || e.description?.trim())
+      );
+      const cleanedEducation = (formData.education || []).filter(
+        (ed) => ed && (ed.institution?.trim() || ed.degree?.trim() || ed.fieldOfStudy?.trim() || ed.description?.trim())
+      );
+
+      const payload = {
+        ...formData,
+        projects: cleanedProjects,
+        experience: cleanedExperience,
+        education: cleanedEducation,
+      };
+
+      const res = await portfolioAPI.createPortfolio(payload);
       if (res.success) {
         confetti({
           particleCount: 120,
@@ -329,13 +499,26 @@ const CreatePortfolioPage = () => {
   };
 
   const tabs = [
-    { id: 'personal', label: '1. Personal Info', icon: User },
-    { id: 'contact', label: '2. Contact & Socials', icon: Mail },
-    { id: 'skills', label: '3. Skills', icon: Wrench },
-    { id: 'projects', label: '4. Projects', icon: FolderGit2, count: formData.projects.length },
-    { id: 'experience', label: '5. Experience', icon: Briefcase, count: formData.experience.length },
-    { id: 'theme', label: '6. Theme & Design', icon: Palette },
+    { id: 'personal', label: '1. Personal Info', icon: User, complete: isPersonalComplete },
+    { id: 'contact', label: '2. Contact & Socials', icon: Mail, complete: isContactComplete },
+    { id: 'skills', label: '3. Skills', icon: Wrench, count: formData.skills.length, complete: isSkillsComplete },
+    { id: 'projects', label: '4. Projects', icon: FolderGit2, count: formData.projects.length, complete: isProjectsComplete },
+    { id: 'experience', label: '5. Experience', icon: Briefcase, count: formData.experience.length, complete: isExperienceComplete },
+    { id: 'education', label: '6. Education', icon: GraduationCap, count: (formData.education || []).length, complete: isEducationComplete },
+    { id: 'theme', label: '7. Theme & Design', icon: Palette, complete: isThemeComplete },
   ];
+
+  const completedStepsCount = [
+    isPersonalComplete,
+    isContactComplete,
+    isSkillsComplete,
+    isProjectsComplete,
+    isExperienceComplete,
+    isEducationComplete,
+    isThemeComplete,
+  ].filter(Boolean).length;
+
+  const isAllStepsFulfilled = completedStepsCount === 7;
 
   return (
     <div style={{ paddingTop: '2.5rem', paddingBottom: '6rem' }}>
@@ -347,8 +530,48 @@ const CreatePortfolioPage = () => {
           </span>
           <h1 style={{ fontSize: '2.4rem', fontWeight: 800 }}>Create Your Developer Portfolio</h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '0.4rem', fontSize: '1rem' }}>
-            Fill in your details below. Preview anytime and publish when you're ready.
+            Fill in your profile details below to publish your live portfolio.
           </p>
+
+          {/* Progress Tracker */}
+          <div
+            style={{
+              maxWidth: '420px',
+              margin: '1.25rem auto 0 auto',
+              background: 'rgba(255, 255, 255, 0.04)',
+              padding: '0.75rem 1.25rem',
+              borderRadius: '9999px',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
+              <span style={{ fontWeight: 700, color: completedStepsCount === 6 ? '#10b981' : 'var(--primary)' }}>
+                {completedStepsCount} of 6 Steps Completed
+              </span>
+            </div>
+            <div
+              style={{
+                flex: 1,
+                height: '6px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '3px',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: `${(completedStepsCount / 6) * 100}%`,
+                  height: '100%',
+                  background: completedStepsCount === 6 ? '#10b981' : 'var(--primary)',
+                  transition: 'width 0.3s ease',
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -388,7 +611,16 @@ const CreatePortfolioPage = () => {
               >
                 <Icon size={16} />
                 <span>{tab.label}</span>
-                {tab.count !== undefined && (
+                {tab.complete && (
+                  <CheckCircle2
+                    size={14}
+                    style={{
+                      color: isActive ? '#ffffff' : '#10b981',
+                      marginLeft: '2px',
+                    }}
+                  />
+                )}
+                {tab.count !== undefined && !tab.complete && (
                   <span
                     style={{
                       background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)',
@@ -417,7 +649,7 @@ const CreatePortfolioPage = () => {
                 </h2>
 
                 <div className="grid-2">
-                  {/* Username with real-time status */}
+                  {/* Username with real-time status & popup */}
                   <div className="form-group">
                     <label className="form-label">
                       Unique Portfolio URL Username <span className="req">*</span>
@@ -471,13 +703,16 @@ const CreatePortfolioPage = () => {
                 <div className="grid-2">
                   {/* Title / Role */}
                   <div className="form-group">
-                    <label className="form-label">Professional Title / Headline</label>
+                    <label className="form-label">
+                      Professional Title / Headline <span className="req">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder="e.g. Senior Full Stack Engineer & Cloud Architect"
                       value={formData.title}
                       onChange={(e) => handleFieldChange('title', e.target.value)}
+                      required
                       id="input-title"
                     />
                   </div>
@@ -511,15 +746,18 @@ const CreatePortfolioPage = () => {
                   </div>
                 </div>
 
-                {/* Bio */}
+                {/* Bio / Summary - REQUIRED */}
                 <div className="form-group">
-                  <label className="form-label">Bio / Summary</label>
+                  <label className="form-label">
+                    Bio / Summary <span className="req">*</span>
+                  </label>
                   <textarea
                     className="form-control"
                     placeholder="Tell recruiters and visitors about your passion, core strengths, and what drives you."
                     rows={4}
                     value={formData.bio}
                     onChange={(e) => handleFieldChange('bio', e.target.value)}
+                    required
                     id="input-bio"
                   />
                 </div>
@@ -536,13 +774,16 @@ const CreatePortfolioPage = () => {
 
                 <div className="grid-2">
                   <div className="form-group">
-                    <label className="form-label">Email Address</label>
+                    <label className="form-label">
+                      Email Address <span className="req">*</span>
+                    </label>
                     <input
                       type="email"
                       className="form-control"
                       placeholder="alex.chen@example.com"
                       value={formData.contact.email}
                       onChange={(e) => handleContactChange('email', e.target.value)}
+                      required
                       id="input-email"
                     />
                   </div>
@@ -612,10 +853,10 @@ const CreatePortfolioPage = () => {
               <div className="animate-fade-in">
                 <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Wrench size={20} color="var(--primary)" />
-                  Technical Skills & Tools
+                  Technical Skills & Tools <span className="req">*</span>
                 </h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                  Add programming languages, frameworks, cloud services, and tools you excel at.
+                  Add programming languages, frameworks, cloud services, and tools you excel at. Choose from popular suggestions below or type your own.
                 </p>
 
                 <DynamicSkillInput
@@ -628,34 +869,120 @@ const CreatePortfolioPage = () => {
             {/* TAB 4: Projects */}
             {activeTab === 'projects' && (
               <div className="animate-fade-in">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                   <div>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <FolderGit2 size={20} color="var(--primary)" />
-                      Projects Showcase ({formData.projects.length})
+                      Projects Showcase ({formData.projects.length}) <span className="req">*</span>
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
                       Showcase your best open-source and commercial work.
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    onClick={handleAddProject}
-                    id="btn-add-project"
-                  >
-                    <Plus size={16} />
-                    <span>Add Project</span>
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleUseExampleProject}
+                      title="Add pre-filled template"
+                    >
+                      <Sparkles size={15} />
+                      <span>Use Example Template</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={handleAddProject}
+                      id="btn-add-project"
+                    >
+                      <Plus size={16} />
+                      <span>Add Project</span>
+                    </button>
+                  </div>
                 </div>
 
                 {formData.projects.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>No projects added yet.</p>
-                    <button type="button" className="btn btn-primary btn-sm" onClick={handleAddProject}>
-                      <Plus size={16} /> Add Your First Project
-                    </button>
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: '16px',
+                      border: '1px dashed var(--border-color)',
+                      padding: '2rem 1.5rem',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          background: 'rgba(99, 102, 241, 0.12)',
+                          color: 'var(--primary)',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          marginBottom: '0.9rem',
+                        }}
+                      >
+                        <Sparkles size={14} /> Example Project Template Preview
+                      </div>
+
+                      {/* Template Preview Card */}
+                      <div
+                        style={{
+                          background: 'rgba(17, 24, 39, 0.75)',
+                          border: '1px solid rgba(255, 255, 255, 0.12)',
+                          borderRadius: '12px',
+                          padding: '1.25rem 1.5rem',
+                          maxWidth: '540px',
+                          margin: '0 auto 1.25rem auto',
+                          textAlign: 'left',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff' }}>
+                            {EXAMPLE_PROJECT_TEMPLATE.name}
+                          </h4>
+                          <span style={{ fontSize: '0.72rem', background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', padding: '2px 8px', borderRadius: '4px' }}>
+                            Example
+                          </span>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                          {EXAMPLE_PROJECT_TEMPLATE.description}
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                          {EXAMPLE_PROJECT_TEMPLATE.techStack.map((tech, i) => (
+                            <span key={i} style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.74rem', color: '#e2e8f0' }}>
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                      No projects added yet. Start fresh or click below to populate the example template.
+                    </p>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={handleAddProject}
+                      >
+                        <Plus size={16} /> Add Blank Project
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={handleUseExampleProject}
+                      >
+                        <Sparkles size={16} /> Use Example Template
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   formData.projects.map((proj, idx) => (
@@ -677,34 +1004,113 @@ const CreatePortfolioPage = () => {
             {/* TAB 5: Experience */}
             {activeTab === 'experience' && (
               <div className="animate-fade-in">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                   <div>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Briefcase size={20} color="var(--primary)" />
-                      Work Experience & Roles ({formData.experience.length})
+                      Work Experience & Roles ({formData.experience.length}) <span className="req">*</span>
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
                       Highlight your career journey and key accomplishments.
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    onClick={handleAddExperience}
-                    id="btn-add-exp"
-                  >
-                    <Plus size={16} />
-                    <span>Add Experience</span>
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleUseExampleExperience}
+                      title="Add pre-filled template"
+                    >
+                      <Sparkles size={15} />
+                      <span>Use Example Template</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={handleAddExperience}
+                      id="btn-add-exp"
+                    >
+                      <Plus size={16} />
+                      <span>Add Experience</span>
+                    </button>
+                  </div>
                 </div>
 
                 {formData.experience.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>No work experience added yet.</p>
-                    <button type="button" className="btn btn-primary btn-sm" onClick={handleAddExperience}>
-                      <Plus size={16} /> Add Experience
-                    </button>
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: '16px',
+                      border: '1px dashed var(--border-color)',
+                      padding: '2rem 1.5rem',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          background: 'rgba(6, 182, 212, 0.12)',
+                          color: 'var(--secondary)',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          marginBottom: '0.9rem',
+                        }}
+                      >
+                        <Sparkles size={14} /> Example Role Template Preview
+                      </div>
+
+                      {/* Template Preview Card */}
+                      <div
+                        style={{
+                          background: 'rgba(17, 24, 39, 0.75)',
+                          border: '1px solid rgba(255, 255, 255, 0.12)',
+                          borderRadius: '12px',
+                          padding: '1.25rem 1.5rem',
+                          maxWidth: '540px',
+                          margin: '0 auto 1.25rem auto',
+                          textAlign: 'left',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff' }}>
+                            {EXAMPLE_EXPERIENCE_TEMPLATE.role} @ {EXAMPLE_EXPERIENCE_TEMPLATE.company}
+                          </h4>
+                          <span style={{ fontSize: '0.72rem', background: 'rgba(6, 182, 212, 0.2)', color: '#67e8f9', padding: '2px 8px', borderRadius: '4px' }}>
+                            {EXAMPLE_EXPERIENCE_TEMPLATE.duration}
+                          </span>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.5 }}>
+                          {EXAMPLE_EXPERIENCE_TEMPLATE.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                      No work experience added yet. Add your professional roles or click below to populate the template.
+                    </p>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={handleAddExperience}
+                      >
+                        <Plus size={16} /> Add Blank Experience
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={handleUseExampleExperience}
+                      >
+                        <Sparkles size={16} /> Use Example Template
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   formData.experience.map((exp, idx) => (
@@ -723,7 +1129,138 @@ const CreatePortfolioPage = () => {
               </div>
             )}
 
-            {/* TAB 6: Theme & Resume */}
+            {/* TAB 6: Education */}
+            {activeTab === 'education' && (
+              <div className="animate-fade-in">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <GraduationCap size={20} color="var(--primary)" />
+                      Education & Degrees ({formData.education?.length || 0}) <span className="req">*</span>
+                    </h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
+                      Add your universities, colleges, degrees, bootcamps, and academic achievements.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleUseExampleEducation}
+                      title="Add pre-filled education template"
+                    >
+                      <Sparkles size={15} />
+                      <span>Use Example Template</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={handleAddEducation}
+                      id="btn-add-edu"
+                    >
+                      <Plus size={16} />
+                      <span>Add Education</span>
+                    </button>
+                  </div>
+                </div>
+
+                {!formData.education || formData.education.length === 0 ? (
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: '16px',
+                      border: '1px dashed var(--border-color)',
+                      padding: '2rem 1.5rem',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          background: 'rgba(168, 85, 247, 0.12)',
+                          color: '#d8b4fe',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          marginBottom: '0.9rem',
+                        }}
+                      >
+                        <Sparkles size={14} /> Example Education Template Preview
+                      </div>
+
+                      {/* Template Preview Card */}
+                      <div
+                        style={{
+                          background: 'rgba(17, 24, 39, 0.75)',
+                          border: '1px solid rgba(255, 255, 255, 0.12)',
+                          borderRadius: '12px',
+                          padding: '1.25rem 1.5rem',
+                          maxWidth: '540px',
+                          margin: '0 auto 1.25rem auto',
+                          textAlign: 'left',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff' }}>
+                            {EXAMPLE_EDUCATION_TEMPLATE.degree} ({EXAMPLE_EDUCATION_TEMPLATE.fieldOfStudy})
+                          </h4>
+                          <span style={{ fontSize: '0.72rem', background: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe', padding: '2px 8px', borderRadius: '4px' }}>
+                            {EXAMPLE_EDUCATION_TEMPLATE.duration}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.88rem', color: 'var(--primary)', fontWeight: 600, marginBottom: '0.4rem' }}>
+                          {EXAMPLE_EDUCATION_TEMPLATE.institution}
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.5 }}>
+                          {EXAMPLE_EDUCATION_TEMPLATE.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                      No education entries added yet. Add your university / college degree or click below to populate the template.
+                    </p>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={handleAddEducation}
+                      >
+                        <Plus size={16} /> Add Blank Education
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={handleUseExampleEducation}
+                      >
+                        <Sparkles size={16} /> Use Example Template
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  formData.education.map((edu, idx) => (
+                    <EducationItemForm
+                      key={idx}
+                      education={edu}
+                      index={idx}
+                      total={formData.education.length}
+                      onChange={handleUpdateEducation}
+                      onRemove={handleRemoveEducation}
+                      onMoveUp={handleMoveEduUp}
+                      onMoveDown={handleMoveEduDown}
+                    />
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* TAB 7: Theme & Resume */}
             {activeTab === 'theme' && (
               <div className="animate-fade-in">
                 <ThemeSelector
@@ -782,12 +1319,27 @@ const CreatePortfolioPage = () => {
               <span>Full Preview Mode</span>
             </button>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {!isAllStepsFulfilled && (
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  Complete {7 - completedStepsCount} more step{7 - completedStepsCount > 1 ? 's' : ''} to publish
+                </span>
+              )}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg"
-                disabled={isSubmitting || usernameStatus.available === false}
+                disabled={!isAllStepsFulfilled || isSubmitting}
                 id="btn-publish-portfolio"
+                title={
+                  !isAllStepsFulfilled
+                    ? `Complete all 7 steps to publish (${7 - completedStepsCount} remaining)`
+                    : 'Publish your live portfolio'
+                }
+                style={{
+                  opacity: !isAllStepsFulfilled ? 0.5 : 1,
+                  cursor: !isAllStepsFulfilled ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.25s ease',
+                }}
               >
                 {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
                 <span>{isSubmitting ? 'Publishing...' : 'Publish Portfolio'}</span>

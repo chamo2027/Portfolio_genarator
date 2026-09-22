@@ -1,0 +1,13 @@
+Developer Portfolio Generator 
+MongoDB Username: chamodyasenevirathne_db_user
+MongoDB Password: Chamoday2003
+MongoDB URL: mongodb+srv://chamodyasenevirathne_db_user:Chamoday2003@cluster0.jdoyyju.mongodb.net/
+
+
+what to do,
+Publish Portfolio button disable until all steps are full fill.
+in Personal Information -> Unique Portfolio URL Username -> when we type any name it says (top up message) username is available!.
+Also Personal Information -> Bio / Summary required this also
+in Technical Skills & Tools -> Add programming languages, frameworks, cloud services, and tools you excel at -> dont select until when user had not select skills.
+also in Projects Showcase -> in there has auto mantically added a project remove that one and show there only example template.
+then in Work Experience & Roles -> also in here has auto mantically added a Role remove that one and show there only example template.

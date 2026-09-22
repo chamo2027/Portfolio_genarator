@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Sparkles,
   ArrowRight,
   Code2,
   Share2,
@@ -46,13 +45,6 @@ const HomePage = () => {
       {/* Hero Section */}
       <section style={{ paddingTop: '5rem', paddingBottom: '5rem', textAlign: 'center', position: 'relative' }}>
         <div className="container">
-          {/* Badge */}
-          <div style={{ display: 'inline-flex', marginBottom: '1.5rem' }}>
-            <span className="badge badge-primary" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}>
-              <Sparkles size={15} />
-              <span>Full-Stack MERN Portfolio Generator</span>
-            </span>
-          </div>
 
           {/* Heading */}
           <h1

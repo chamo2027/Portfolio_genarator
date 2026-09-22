@@ -15,6 +15,7 @@ const createPortfolio = async (req, res, next) => {
       skills,
       projects,
       experience,
+      education,
       theme,
       resumeUrl,
     } = req.body;
@@ -46,16 +47,30 @@ const createPortfolio = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Full name is required' });
     }
 
+    // Filter out completely blank projects, experiences, and education entries
+    const cleanedProjects = Array.isArray(projects)
+      ? projects.filter((p) => p && (p.name?.trim() || p.description?.trim() || p.githubLink?.trim() || p.liveDemo?.trim()))
+      : [];
+
+    const cleanedExperience = Array.isArray(experience)
+      ? experience.filter((e) => e && (e.company?.trim() || e.role?.trim() || e.description?.trim()))
+      : [];
+
+    const cleanedEducation = Array.isArray(education)
+      ? education.filter((ed) => ed && (ed.institution?.trim() || ed.degree?.trim() || ed.fieldOfStudy?.trim() || ed.description?.trim()))
+      : [];
+
     const newPortfolio = new Portfolio({
       username: cleanUsername,
       fullName: fullName.trim(),
-      title: title || 'Software Developer',
-      bio: bio || '',
+      title: title?.trim() || 'Software Developer',
+      bio: bio ? bio.trim() : '',
       profileImage: profileImage || '',
       contact: contact || {},
       skills: Array.isArray(skills) ? skills.filter(Boolean) : [],
-      projects: Array.isArray(projects) ? projects : [],
-      experience: Array.isArray(experience) ? experience : [],
+      projects: cleanedProjects,
+      experience: cleanedExperience,
+      education: cleanedEducation,
       theme: theme || 'modern-dark',
       resumeUrl: resumeUrl || '',
     });
@@ -140,6 +155,7 @@ const updatePortfolio = async (req, res, next) => {
       skills,
       projects,
       experience,
+      education,
       theme,
       resumeUrl,
     } = req.body;
@@ -157,6 +173,7 @@ const updatePortfolio = async (req, res, next) => {
       ...(skills !== undefined && { skills: Array.isArray(skills) ? skills.filter(Boolean) : [] }),
       ...(projects !== undefined && { projects: Array.isArray(projects) ? projects : [] }),
       ...(experience !== undefined && { experience: Array.isArray(experience) ? experience : [] }),
+      ...(education !== undefined && { education: Array.isArray(education) ? education : [] }),
       ...(theme !== undefined && { theme }),
       ...(resumeUrl !== undefined && { resumeUrl }),
     };

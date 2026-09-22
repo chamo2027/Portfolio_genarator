@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Code2,
   Briefcase,
+  GraduationCap,
   Layers,
   FileText,
   Eye,
@@ -40,6 +41,7 @@ const PortfolioRenderer = ({
     skills = [],
     projects = [],
     experience = [],
+    education = [],
     views = 0,
     resumeUrl = '',
   } = portfolio || {};
@@ -384,6 +386,51 @@ const PortfolioRenderer = ({
                   </div>
                   {exp.description && (
                     <p className="pf-timeline-desc">{exp.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Education Section */}
+      {education && education.length > 0 && (
+        <section className="pf-section">
+          <div className="pf-container">
+            <div className="pf-section-header">
+              <span className="pf-section-tag">Education</span>
+              <h2 className="pf-section-title">Academic Background</h2>
+            </div>
+
+            <div className="pf-timeline">
+              {education.map((edu, idx) => (
+                <div key={idx} className="pf-timeline-item">
+                  <div
+                    className="pf-timeline-dot"
+                    style={{
+                      borderColor: 'var(--pf-bg)',
+                      background: 'var(--pf-secondary)',
+                      boxShadow: '0 0 10px var(--pf-secondary)',
+                    }}
+                  />
+                  <h3 className="pf-timeline-role">
+                    {edu.degree ? edu.degree : 'Degree / Certificate'}
+                    {edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+                  </h3>
+                  <div className="pf-timeline-meta">
+                    <span className="pf-timeline-company" style={{ color: 'var(--pf-secondary)' }}>
+                      {edu.institution}
+                    </span>
+                    {edu.duration && (
+                      <>
+                        <span style={{ color: 'var(--pf-text-muted)' }}>•</span>
+                        <span className="pf-timeline-duration">{edu.duration}</span>
+                      </>
+                    )}
+                  </div>
+                  {edu.description && (
+                    <p className="pf-timeline-desc">{edu.description}</p>
                   )}
                 </div>
               ))}

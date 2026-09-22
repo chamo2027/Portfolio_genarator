@@ -80,6 +80,15 @@ const samplePortfolios = [
         description: 'Developed responsive client dashboards for Fortune 500 fintech and e-commerce clients using React, Redux, and modern styling architectures.',
       },
     ],
+    education: [
+      {
+        institution: 'University of California, Berkeley',
+        degree: 'Bachelor of Science',
+        fieldOfStudy: 'Computer Science',
+        duration: '2014 - 2018',
+        description: 'Graduated with Honors. Focus on Distributed Systems and Software Architecture.',
+      },
+    ],
     theme: 'modern-dark',
     views: 342,
     resumeUrl: '',
@@ -141,6 +150,15 @@ const samplePortfolios = [
         description: 'Built cross-platform responsive web applications with AA accessibility compliance.',
       },
     ],
+    education: [
+      {
+        institution: 'Royal College of Art, London',
+        degree: 'Master of Arts',
+        fieldOfStudy: 'Digital Media & Interactive Design',
+        duration: '2017 - 2019',
+        description: 'Specialized in Human-Computer Interaction and Generative Visual Interfaces.',
+      },
+    ],
     theme: 'glassmorphism',
     views: 520,
     resumeUrl: '',
@@ -195,6 +213,15 @@ const samplePortfolios = [
         role: 'Principal Backend Engineer',
         duration: '2022 - Present',
         description: 'Architected distributed model serving infrastructure processing 100M daily API queries.',
+      },
+    ],
+    education: [
+      {
+        institution: 'Stanford University',
+        degree: 'Master of Science',
+        fieldOfStudy: 'Artificial Intelligence & Computer Systems',
+        duration: '2020 - 2022',
+        description: 'Research in High-Performance Neural Network Serving and Parallel Compute Systems.',
       },
     ],
     theme: 'cyberpunk',
