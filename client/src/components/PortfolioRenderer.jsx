@@ -320,12 +320,16 @@ const PortfolioRenderer = ({
               {projects.map((proj, idx) => (
                 <div key={idx} className="pf-card pf-project-card">
                   {proj.image && (
-                    <img
-                      src={proj.image}
-                      alt={proj.name}
-                      className="pf-project-img"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
+                    <div className="pf-project-img-wrap">
+                      <img
+                        src={proj.image}
+                        alt={proj.name || 'Project image'}
+                        className="pf-project-img"
+                        onError={(e) => {
+                          e.target.parentElement.style.display = 'none';
+                        }}
+                      />
+                    </div>
                   )}
 
                   <h3 className="pf-project-title">{proj.name}</h3>
@@ -350,7 +354,7 @@ const PortfolioRenderer = ({
                         href={proj.liveDemo.startsWith('http') ? proj.liveDemo : `https://${proj.liveDemo}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="pf-btn pf-btn-primary"
+                        className="pf-btn pf-btn-live"
                       >
                         <ExternalLink size={14} />
                         <span>Live Demo</span>
@@ -362,7 +366,7 @@ const PortfolioRenderer = ({
                         href={proj.githubLink.startsWith('http') ? proj.githubLink : `https://${proj.githubLink}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="pf-btn pf-btn-outline"
+                        className="pf-btn pf-btn-code"
                       >
                         <Github size={14} />
                         <span>Code</span>
