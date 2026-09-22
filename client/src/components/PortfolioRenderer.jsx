@@ -19,6 +19,10 @@ import {
   Palette,
   Sun,
   Moon,
+  Copy,
+  ArrowUpRight,
+  Sparkles,
+  Send,
 } from 'lucide-react';
 import '../styles/themes.css';
 
@@ -29,6 +33,7 @@ const PortfolioRenderer = ({
   onThemeChange = null,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   const [activeTheme, setActiveTheme] = useState(customTheme || portfolio?.theme || 'modern-dark');
 
   const themeClass = `theme-${customTheme || activeTheme}`;
@@ -458,31 +463,85 @@ const PortfolioRenderer = ({
         </section>
       )}
 
-      {/* Modern 2-Column Contact Section */}
+      {/* Eye-Catching Modern Contact Section */}
       {Boolean(contact?.email || contact?.phone || contact?.linkedin || contact?.github || contact?.website || contact?.twitter || contact?.location) && (
-        <section className="pf-section" id="contact-section">
+        <section className="pf-section pf-contact-hero-section" id="contact-section">
           <div className="pf-container">
-            <div className="pf-section-header" style={{ marginBottom: '1.5rem' }}>
-              <span className="pf-section-tag">Get in Touch</span>
-              <h2 className="pf-section-title">Let's Connect</h2>
-            </div>
+            <div className="pf-contact-box-container">
+              {/* Atmospheric Glow Background */}
+              <div className="pf-contact-ambient-glow" />
 
-            <div className="pf-contact-centered-wrapper">
+              {/* Top Eye-Catchy Header */}
+              <div className="pf-contact-header-center">
+                <div className="pf-contact-status-pill">
+                  <span className="pf-pulse-indicator" />
+                  <span>Get in Touch • Open to Opportunities</span>
+                </div>
+                <h2 className="pf-contact-mega-title">
+                  Let's Connect & <span className="pf-gradient-shine">Collaborate</span>
+                </h2>
+                <p className="pf-contact-hero-subtitle">
+                  Have an exciting project, full-time engineering opportunity, or just want to chat about tech? My inbox is always open.
+                </p>
+              </div>
+
+              {/* Highlight Direct Email Spotlight Bar */}
+              {contact?.email && (
+                <div className="pf-contact-email-spotlight">
+                  <div className="pf-email-spotlight-left">
+                    <div className="pf-email-icon-glow">
+                      <Mail size={22} />
+                    </div>
+                    <div style={{ overflow: 'hidden' }}>
+                      <span className="pf-email-sub-label">Direct Email Address</span>
+                      <span className="pf-email-main-val">{contact.email}</span>
+                    </div>
+                  </div>
+
+                  <div className="pf-email-spotlight-actions">
+                    <button
+                      type="button"
+                      className="pf-btn pf-btn-spotlight-copy"
+                      onClick={() => {
+                        navigator.clipboard.writeText(contact.email);
+                        setEmailCopied(true);
+                        setTimeout(() => setEmailCopied(false), 2000);
+                      }}
+                      title="Copy email address"
+                    >
+                      {emailCopied ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
+                      <span>{emailCopied ? 'Copied!' : 'Copy Email'}</span>
+                    </button>
+
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="pf-btn pf-btn-spotlight-send"
+                      title="Open default email client"
+                    >
+                      <Send size={15} />
+                      <span>Send Email</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Channels Grid */}
               <div className="pf-contact-cards-grid">
                 {/* Phone */}
                 {contact?.phone && (
                   <a
                     href={`tel:${contact.phone}`}
-                    className="pf-contact-card-item"
+                    className="pf-contact-card-item card-phone"
                     title="Call Phone Number"
                   >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.15)' }}>
+                    <div className="pf-contact-icon-bubble">
                       <Phone size={20} />
                     </div>
                     <div className="pf-contact-text-wrap">
                       <span className="pf-contact-text-label">Phone</span>
                       <span className="pf-contact-text-val">{contact.phone}</span>
                     </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
                   </a>
                 )}
 
@@ -492,16 +551,17 @@ const PortfolioRenderer = ({
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.location)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="pf-contact-card-item"
+                    className="pf-contact-card-item card-location"
                     title="View Location on Google Maps"
                   >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#f43f5e', background: 'rgba(244, 63, 94, 0.15)' }}>
+                    <div className="pf-contact-icon-bubble">
                       <MapPin size={20} />
                     </div>
                     <div className="pf-contact-text-wrap">
                       <span className="pf-contact-text-label">Location</span>
                       <span className="pf-contact-text-val">{contact.location}</span>
                     </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
                   </a>
                 )}
 
@@ -511,16 +571,17 @@ const PortfolioRenderer = ({
                     href={contact.github.startsWith('http') ? contact.github : `https://${contact.github}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="pf-contact-card-item"
+                    className="pf-contact-card-item card-github"
                     title="Visit GitHub Profile"
                   >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#e2e8f0', background: 'rgba(255, 255, 255, 0.1)' }}>
+                    <div className="pf-contact-icon-bubble">
                       <Github size={20} />
                     </div>
                     <div className="pf-contact-text-wrap">
                       <span className="pf-contact-text-label">GitHub</span>
                       <span className="pf-contact-text-val">{getCleanHandle(contact.github, 'GitHub')}</span>
                     </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
                   </a>
                 )}
 
@@ -530,33 +591,17 @@ const PortfolioRenderer = ({
                     href={contact.linkedin.startsWith('http') ? contact.linkedin : `https://${contact.linkedin}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="pf-contact-card-item"
+                    className="pf-contact-card-item card-linkedin"
                     title="Connect on LinkedIn"
                   >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#0284c7', background: 'rgba(2, 132, 199, 0.15)' }}>
+                    <div className="pf-contact-icon-bubble">
                       <Linkedin size={20} />
                     </div>
                     <div className="pf-contact-text-wrap">
                       <span className="pf-contact-text-label">LinkedIn</span>
                       <span className="pf-contact-text-val">{getCleanHandle(contact.linkedin, 'LinkedIn')}</span>
                     </div>
-                  </a>
-                )}
-
-                {/* Email */}
-                {contact?.email && (
-                  <a
-                    href={`mailto:${contact.email}`}
-                    className="pf-contact-card-item"
-                    title="Send Direct Email"
-                  >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#38bdf8', background: 'rgba(56, 189, 248, 0.15)' }}>
-                      <Mail size={20} />
-                    </div>
-                    <div className="pf-contact-text-wrap">
-                      <span className="pf-contact-text-label">Email</span>
-                      <span className="pf-contact-text-val">{contact.email}</span>
-                    </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
                   </a>
                 )}
 
@@ -566,16 +611,17 @@ const PortfolioRenderer = ({
                     href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="pf-contact-card-item"
+                    className="pf-contact-card-item card-website"
                     title="Visit Personal Website"
                   >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.15)' }}>
+                    <div className="pf-contact-icon-bubble">
                       <Globe size={20} />
                     </div>
                     <div className="pf-contact-text-wrap">
                       <span className="pf-contact-text-label">Website</span>
                       <span className="pf-contact-text-val">{contact.website.replace(/^https?:\/\//, '')}</span>
                     </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
                   </a>
                 )}
 
@@ -585,16 +631,17 @@ const PortfolioRenderer = ({
                     href={contact.twitter.startsWith('http') ? contact.twitter : `https://${contact.twitter}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="pf-contact-card-item"
+                    className="pf-contact-card-item card-twitter"
                     title="Follow on Twitter / X"
                   >
-                    <div className="pf-contact-icon-bubble" style={{ color: '#38bdf8', background: 'rgba(56, 189, 248, 0.15)' }}>
+                    <div className="pf-contact-icon-bubble">
                       <Twitter size={20} />
                     </div>
                     <div className="pf-contact-text-wrap">
                       <span className="pf-contact-text-label">Twitter / X</span>
                       <span className="pf-contact-text-val">{getCleanHandle(contact.twitter, '@Twitter')}</span>
                     </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
                   </a>
                 )}
               </div>

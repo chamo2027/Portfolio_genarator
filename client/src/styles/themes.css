@@ -493,19 +493,231 @@
 }
 
 /* ===================================================
-   MODERN CENTERED CONTACT SECTION
+   EYE-CATCHING MODERN CONTACT SECTION
    =================================================== */
 
-.pf-contact-centered-wrapper {
-  max-width: 760px;
-  margin: 0 auto;
-  width: 100%;
+.pf-contact-hero-section {
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 0 2rem;
 }
 
+.pf-contact-box-container {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: 28px;
+  padding: 3.5rem 2.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 640px) {
+  .pf-contact-box-container {
+    padding: 2.25rem 1.25rem;
+    border-radius: 20px;
+  }
+}
+
+.pf-contact-ambient-glow {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 450px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(var(--pf-primary-rgb), 0.25) 0%, rgba(var(--pf-secondary-rgb, 139, 92, 246), 0.1) 60%, transparent 80%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pf-contact-header-center {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2.25rem;
+  z-index: 1;
+}
+
+.pf-contact-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.1rem;
+}
+
+.pf-pulse-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: pfPulse 2s infinite ease-in-out;
+}
+
+@keyframes pfPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.pf-contact-mega-title {
+  font-size: 2.35rem;
+  font-weight: 900;
+  color: var(--pf-text);
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 640px) {
+  .pf-contact-mega-title {
+    font-size: 1.75rem;
+  }
+}
+
+.pf-gradient-shine {
+  background: linear-gradient(135deg, var(--pf-primary) 0%, #38bdf8 50%, var(--pf-secondary, #a855f7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.pf-contact-hero-subtitle {
+  color: var(--pf-text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Email Spotlight Hero Box */
+.pf-contact-email-spotlight {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, rgba(var(--pf-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(var(--pf-primary-rgb), 0.35);
+  border-radius: 18px;
+  padding: 1.25rem 1.6rem;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.pf-email-spotlight-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.pf-email-icon-glow {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(var(--pf-primary-rgb), 0.25);
+  border: 1px solid rgba(var(--pf-primary-rgb), 0.4);
+  color: var(--pf-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(var(--pf-primary-rgb), 0.35);
+}
+
+.pf-email-sub-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--pf-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.pf-email-main-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pf-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.pf-email-spotlight-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.pf-btn-spotlight-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--pf-border);
+  color: var(--pf-text);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pf-btn-spotlight-copy:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--pf-primary);
+  color: var(--pf-text);
+}
+
+.pf-btn-spotlight-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--pf-primary) 0%, var(--pf-secondary, #6366f1) 100%);
+  color: #ffffff;
+  border: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(var(--pf-primary-rgb), 0.35);
+  transition: all 0.2s ease;
+}
+
+.pf-btn-spotlight-send:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+/* Contact Cards Grid */
 .pf-contact-cards-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.1rem;
+  gap: 1rem;
+  z-index: 1;
 }
 
 @media (max-width: 640px) {
@@ -515,29 +727,59 @@
 }
 
 .pf-contact-card-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 1.15rem 1.35rem;
   background: var(--pf-card);
   border: 1px solid var(--pf-border);
-  border-radius: var(--radius-lg, 14px);
+  border-radius: 16px;
   text-decoration: none;
   color: inherit;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(10px);
 }
 
 .pf-contact-card-item:hover {
-  border-color: var(--pf-border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+}
+
+.pf-contact-card-item.card-phone:hover {
+  border-color: #10b981;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.22);
+}
+
+.pf-contact-card-item.card-location:hover {
+  border-color: #f43f5e;
+  box-shadow: 0 8px 24px rgba(244, 63, 94, 0.22);
+}
+
+.pf-contact-card-item.card-github:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+}
+
+.pf-contact-card-item.card-linkedin:hover {
+  border-color: #0284c7;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.22);
+}
+
+.pf-contact-card-item.card-website:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.22);
+}
+
+.pf-contact-card-item.card-twitter:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.22);
 }
 
 .pf-contact-icon-bubble {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: 12px;
   background: var(--pf-surface-2);
   border: 1px solid var(--pf-border);
   display: flex;
@@ -548,14 +790,22 @@
   transition: transform 0.25s ease, background 0.25s ease;
 }
 
+.card-phone .pf-contact-icon-bubble { color: #10b981; background: rgba(16, 185, 129, 0.15); }
+.card-location .pf-contact-icon-bubble { color: #f43f5e; background: rgba(244, 63, 94, 0.15); }
+.card-github .pf-contact-icon-bubble { color: #e2e8f0; background: rgba(255, 255, 255, 0.1); }
+.card-linkedin .pf-contact-icon-bubble { color: #0284c7; background: rgba(2, 132, 199, 0.15); }
+.card-website .pf-contact-icon-bubble { color: #8b5cf6; background: rgba(139, 92, 246, 0.15); }
+.card-twitter .pf-contact-icon-bubble { color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
+
 .pf-contact-card-item:hover .pf-contact-icon-bubble {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .pf-contact-text-wrap {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex-grow: 1;
 }
 
 .pf-contact-text-label {
@@ -566,7 +816,7 @@
 }
 
 .pf-contact-text-val {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   font-weight: 600;
   color: var(--pf-text);
   white-space: nowrap;
@@ -577,6 +827,20 @@
 
 .pf-contact-card-item:hover .pf-contact-text-val {
   color: var(--pf-primary);
+}
+
+.pf-contact-card-arrow {
+  color: var(--pf-text-muted);
+  opacity: 0.4;
+  transform: translate(0, 0);
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.pf-contact-card-item:hover .pf-contact-card-arrow {
+  opacity: 1;
+  color: var(--pf-text);
+  transform: translate(2px, -2px);
 }
 
 

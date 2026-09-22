@@ -46,18 +46,34 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Root route info
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to Developer Portfolio Generator API',
-    endpoints: {
-      health: '/api/health',
-      portfolios: '/api/portfolio',
-      portfolioByUsername: '/api/portfolio/:username',
-      checkUsername: '/api/portfolio/check/:username',
-    },
+// Serve Frontend in Production or if client/dist exists
+const clientDistPath = path.join(__dirname, '../client/dist');
+const fs = require('fs');
+
+if (process.env.NODE_ENV === 'production' || fs.existsSync(path.join(clientDistPath, 'index.html'))) {
+  app.use(express.static(clientDistPath));
+
+  app.get('*', (req, res, next) => {
+    // Let API routes and uploaded files pass through without being intercepted
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
   });
-});
+} else {
+  // Root route info in dev
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'Welcome to Developer Portfolio Generator API',
+      endpoints: {
+        health: '/api/health',
+        portfolios: '/api/portfolio',
+        portfolioByUsername: '/api/portfolio/:username',
+        checkUsername: '/api/portfolio/check/:username',
+      },
+    });
+  });
+}
 
 // Global Error Handler
 app.use(errorHandler);

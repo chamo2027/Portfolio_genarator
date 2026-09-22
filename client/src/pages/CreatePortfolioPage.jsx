@@ -500,9 +500,9 @@ const CreatePortfolioPage = () => {
   };
 
   const tabs = [
-    { id: 'personal', label: '1. Personal Info', icon: User, complete: isPersonalComplete },
-    { id: 'contact', label: '2. Contact & Socials', icon: Mail, complete: isContactComplete },
-    { id: 'skills', label: '3. Skills', icon: Wrench, count: formData.skills.length, complete: isSkillsComplete },
+    { id: 'personal', label: '1. Personal Info', icon: User, complete: isPersonalComplete, required: true },
+    { id: 'contact', label: '2. Contact & Socials', icon: Mail, complete: isContactComplete, required: true },
+    { id: 'skills', label: '3. Skills', icon: Wrench, count: formData.skills.length, complete: isSkillsComplete, required: true },
     { id: 'projects', label: '4. Projects', icon: FolderGit2, count: formData.projects.length, complete: isProjectsComplete },
     { id: 'experience', label: '5. Experience', icon: Briefcase, count: formData.experience.length, complete: isExperienceComplete },
     { id: 'education', label: '6. Education', icon: GraduationCap, count: (formData.education || []).length, complete: isEducationComplete },
@@ -519,7 +519,9 @@ const CreatePortfolioPage = () => {
     isThemeComplete,
   ].filter(Boolean).length;
 
-  const isAllStepsFulfilled = completedStepsCount === 7;
+  // Personal Info, Contact Email, and at least 1 Skill are the core requirements
+  // Experience, Projects, Education are optional so developers/students without experience can publish directly!
+  const canPublish = Boolean(isPersonalComplete && isContactComplete && isSkillsComplete);
 
   return (
     <div style={{ paddingTop: '2.5rem', paddingBottom: '6rem' }}>
@@ -537,7 +539,7 @@ const CreatePortfolioPage = () => {
           {/* Progress Tracker */}
           <div
             style={{
-              maxWidth: '420px',
+              maxWidth: '440px',
               margin: '1.25rem auto 0 auto',
               background: 'rgba(255, 255, 255, 0.04)',
               padding: '0.75rem 1.25rem',
@@ -550,8 +552,8 @@ const CreatePortfolioPage = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
-              <span style={{ fontWeight: 700, color: completedStepsCount === 6 ? '#10b981' : 'var(--primary)' }}>
-                {completedStepsCount} of 6 Steps Completed
+              <span style={{ fontWeight: 700, color: canPublish ? '#10b981' : 'var(--primary)' }}>
+                {canPublish ? '✓ Ready to Publish!' : `${completedStepsCount} of 7 Sections Filled`}
               </span>
             </div>
             <div
@@ -565,9 +567,9 @@ const CreatePortfolioPage = () => {
             >
               <div
                 style={{
-                  width: `${(completedStepsCount / 6) * 100}%`,
+                  width: `${(completedStepsCount / 7) * 100}%`,
                   height: '100%',
-                  background: completedStepsCount === 6 ? '#10b981' : 'var(--primary)',
+                  background: canPublish ? '#10b981' : 'var(--primary)',
                   transition: 'width 0.3s ease',
                 }}
               />
@@ -1021,10 +1023,10 @@ const CreatePortfolioPage = () => {
                   <div>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Briefcase size={20} color="var(--primary)" />
-                      Work Experience & Roles ({formData.experience.length}) <span className="req">*</span>
+                      Work Experience & Roles ({formData.experience.length}) <span className="optional" style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-muted)' }}>(Optional)</span>
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
-                      Highlight your career journey and key accomplishments.
+                      Highlight your career journey and key accomplishments. You can publish even if you have no prior work experience.
                     </p>
                   </div>
 
@@ -1333,24 +1335,24 @@ const CreatePortfolioPage = () => {
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {!isAllStepsFulfilled && (
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Complete {7 - completedStepsCount} more step{7 - completedStepsCount > 1 ? 's' : ''} to publish
+              {!canPublish && (
+                <span style={{ fontSize: '0.85rem', color: '#f59e0b' }}>
+                  Fill in Personal Info, Contact Email & Skills to publish
                 </span>
               )}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg"
-                disabled={!isAllStepsFulfilled || isSubmitting}
+                disabled={!canPublish || isSubmitting}
                 id="btn-publish-portfolio"
                 title={
-                  !isAllStepsFulfilled
-                    ? `Complete all 7 steps to publish (${7 - completedStepsCount} remaining)`
+                  !canPublish
+                    ? 'Fill in Personal Info, Contact Email & Skills to publish'
                     : 'Publish your live portfolio'
                 }
                 style={{
-                  opacity: !isAllStepsFulfilled ? 0.5 : 1,
-                  cursor: !isAllStepsFulfilled ? 'not-allowed' : 'pointer',
+                  opacity: !canPublish ? 0.5 : 1,
+                  cursor: !canPublish ? 'not-allowed' : 'pointer',
                   transition: 'all 0.25s ease',
                 }}
               >
