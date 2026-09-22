@@ -33,7 +33,6 @@ const PortfolioRenderer = ({
   onThemeChange = null,
 }) => {
   const [copied, setCopied] = useState(false);
-  const [emailCopied, setEmailCopied] = useState(false);
   const [activeTheme, setActiveTheme] = useState(customTheme || portfolio?.theme || 'modern-dark');
 
   const themeClass = `theme-${customTheme || activeTheme}`;
@@ -485,48 +484,25 @@ const PortfolioRenderer = ({
                 </p>
               </div>
 
-              {/* Highlight Direct Email Spotlight Bar */}
-              {contact?.email && (
-                <div className="pf-contact-email-spotlight">
-                  <div className="pf-email-spotlight-left">
-                    <div className="pf-email-icon-glow">
-                      <Mail size={22} />
-                    </div>
-                    <div style={{ overflow: 'hidden' }}>
-                      <span className="pf-email-sub-label">Direct Email Address</span>
-                      <span className="pf-email-main-val">{contact.email}</span>
-                    </div>
-                  </div>
-
-                  <div className="pf-email-spotlight-actions">
-                    <button
-                      type="button"
-                      className="pf-btn pf-btn-spotlight-copy"
-                      onClick={() => {
-                        navigator.clipboard.writeText(contact.email);
-                        setEmailCopied(true);
-                        setTimeout(() => setEmailCopied(false), 2000);
-                      }}
-                      title="Copy email address"
-                    >
-                      {emailCopied ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
-                      <span>{emailCopied ? 'Copied!' : 'Copy Email'}</span>
-                    </button>
-
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="pf-btn pf-btn-spotlight-send"
-                      title="Open default email client"
-                    >
-                      <Send size={15} />
-                      <span>Send Email</span>
-                    </a>
-                  </div>
-                </div>
-              )}
-
               {/* Channels Grid */}
               <div className="pf-contact-cards-grid">
+                {/* Email */}
+                {contact?.email && (
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="pf-contact-card-item card-email"
+                    title="Send Direct Email"
+                  >
+                    <div className="pf-contact-icon-bubble">
+                      <Mail size={20} />
+                    </div>
+                    <div className="pf-contact-text-wrap">
+                      <span className="pf-contact-text-label">Email</span>
+                      <span className="pf-contact-text-val">{contact.email}</span>
+                    </div>
+                    <ArrowUpRight size={16} className="pf-contact-card-arrow" />
+                  </a>
+                )}
                 {/* Phone */}
                 {contact?.phone && (
                   <a

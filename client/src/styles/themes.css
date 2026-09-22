@@ -602,115 +602,6 @@
   margin: 0 auto;
 }
 
-/* Email Spotlight Hero Box */
-.pf-contact-email-spotlight {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  background: linear-gradient(135deg, rgba(var(--pf-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
-  border: 1px solid rgba(var(--pf-primary-rgb), 0.35);
-  border-radius: 18px;
-  padding: 1.25rem 1.6rem;
-  margin-bottom: 1.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-}
-
-.pf-email-spotlight-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  overflow: hidden;
-}
-
-.pf-email-icon-glow {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: rgba(var(--pf-primary-rgb), 0.25);
-  border: 1px solid rgba(var(--pf-primary-rgb), 0.4);
-  color: var(--pf-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 0 16px rgba(var(--pf-primary-rgb), 0.35);
-}
-
-.pf-email-sub-label {
-  display: block;
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: var(--pf-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
-}
-
-.pf-email-main-val {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--pf-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-}
-
-.pf-email-spotlight-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  flex-shrink: 0;
-}
-
-.pf-btn-spotlight-copy {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--pf-border);
-  color: var(--pf-text);
-  font-size: 0.86rem;
-  font-weight: 600;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.pf-btn-spotlight-copy:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--pf-primary);
-  color: var(--pf-text);
-}
-
-.pf-btn-spotlight-send {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, var(--pf-primary) 0%, var(--pf-secondary, #6366f1) 100%);
-  color: #ffffff;
-  border: none;
-  font-size: 0.86rem;
-  font-weight: 700;
-  padding: 0.6rem 1.25rem;
-  border-radius: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 4px 14px rgba(var(--pf-primary-rgb), 0.35);
-  transition: all 0.2s ease;
-}
-
-.pf-btn-spotlight-send:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  color: #ffffff;
-}
-
 /* Contact Cards Grid */
 .pf-contact-cards-grid {
   position: relative;
@@ -744,6 +635,11 @@
 .pf-contact-card-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+}
+
+.pf-contact-card-item.card-email:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.22);
 }
 
 .pf-contact-card-item.card-phone:hover {
@@ -790,6 +686,7 @@
   transition: transform 0.25s ease, background 0.25s ease;
 }
 
+.card-email .pf-contact-icon-bubble { color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
 .card-phone .pf-contact-icon-bubble { color: #10b981; background: rgba(16, 185, 129, 0.15); }
 .card-location .pf-contact-icon-bubble { color: #f43f5e; background: rgba(244, 63, 94, 0.15); }
 .card-github .pf-contact-icon-bubble { color: #e2e8f0; background: rgba(255, 255, 255, 0.1); }
