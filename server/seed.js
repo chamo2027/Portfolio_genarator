@@ -14,6 +14,7 @@ const samplePortfolios = [
     profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     contact: {
       email: 'alex.chen.dev@example.com',
+      phone: '+1 (415) 890-2341',
       linkedin: 'https://linkedin.com/in/alexchen-dev',
       github: 'https://github.com/alexchen-demo',
       website: 'https://alexchen.dev',
@@ -102,6 +103,7 @@ const samplePortfolios = [
     profileImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
     contact: {
       email: 'sarah.j.design@example.com',
+      phone: '+44 20 7946 0912',
       linkedin: 'https://linkedin.com/in/sarahjenkins-ui',
       github: 'https://github.com/sarah-jenkins',
       website: 'https://sarahdesigns.io',
@@ -172,6 +174,7 @@ const samplePortfolios = [
     profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     contact: {
       email: 'marcus.vance@example.com',
+      phone: '+1 (512) 674-9821',
       linkedin: 'https://linkedin.com/in/marcus-vance-ai',
       github: 'https://github.com/marcus-vance',
       website: 'https://marcusvance.ai',

@@ -116,6 +116,10 @@ const PortfolioSchema = new mongoose.Schema({
       trim: true,
       lowercase: true,
     },
+    phone: {
+      type: String,
+      trim: true,
+    },
     linkedin: {
       type: String,
       trim: true,

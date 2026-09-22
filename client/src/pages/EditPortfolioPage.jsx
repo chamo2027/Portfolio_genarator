@@ -45,6 +45,7 @@ const EditPortfolioPage = () => {
     profileImage: '',
     contact: {
       email: '',
+      phone: '',
       linkedin: '',
       github: '',
       website: '',
@@ -74,6 +75,7 @@ const EditPortfolioPage = () => {
             profileImage: data.profileImage || '',
             contact: {
               email: data.contact?.email || '',
+              phone: data.contact?.phone || '',
               linkedin: data.contact?.linkedin || '',
               github: data.contact?.github || '',
               website: data.contact?.website || '',
@@ -556,6 +558,17 @@ const EditPortfolioPage = () => {
                       className="form-control"
                       value={formData.contact.email}
                       onChange={(e) => handleContactChange('email', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Phone Number</label>
+                    <input
+                      type="tel"
+                      className="form-control"
+                      placeholder="e.g. +1 (555) 019-2834 / 0703546285"
+                      value={formData.contact.phone || ''}
+                      onChange={(e) => handleContactChange('phone', e.target.value)}
                     />
                   </div>
 
