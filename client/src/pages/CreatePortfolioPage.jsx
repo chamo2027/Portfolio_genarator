@@ -26,6 +26,7 @@ import ProjectItemForm from '../components/ProjectItemForm';
 import ExperienceItemForm from '../components/ExperienceItemForm';
 import EducationItemForm from '../components/EducationItemForm';
 import ThemeSelector from '../components/ThemeSelector';
+import PublishSuccessModal from '../components/PublishSuccessModal';
 
 const INITIAL_FORM = {
   username: '',
@@ -105,6 +106,7 @@ const CreatePortfolioPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
+  const [publishedData, setPublishedData] = useState(null);
 
   // Save draft to sessionStorage whenever formData changes
   useEffect(() => {
@@ -481,15 +483,13 @@ const CreatePortfolioPage = () => {
       const res = await portfolioAPI.createPortfolio(payload);
       if (res.success) {
         confetti({
-          particleCount: 120,
-          spread: 80,
+          particleCount: 150,
+          spread: 90,
           origin: { y: 0.6 },
         });
         addToast('Portfolio published successfully! 🎉', 'success');
         sessionStorage.removeItem('devfolio_draft');
-        setTimeout(() => {
-          navigate(`/portfolio/${res.data.username}`);
-        }, 1200);
+        setPublishedData(res.data);
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to create portfolio. Please check your inputs.';
@@ -1361,6 +1361,14 @@ const CreatePortfolioPage = () => {
           </div>
         </form>
       </div>
+
+      {/* Celebratory Post-Publish Success Modal with Shareable URL */}
+      <PublishSuccessModal
+        isOpen={Boolean(publishedData)}
+        onClose={() => setPublishedData(null)}
+        username={publishedData?.username}
+        fullName={publishedData?.fullName}
+      />
     </div>
   );
 };

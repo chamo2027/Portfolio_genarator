@@ -8,6 +8,7 @@ const {
   deletePortfolio,
   getAllPortfolios,
   checkUsername,
+  sendPortfolioMessage,
 } = require('../controllers/portfolioController');
 
 // All Portfolios & Creation
@@ -17,6 +18,9 @@ router.route('/')
 
 // Check username availability
 router.get('/check/:username', checkUsername);
+
+// Send message to portfolio owner via Email
+router.post('/:username/contact', sendPortfolioMessage);
 
 // File upload (image/resume)
 router.post('/upload', upload.single('file'), (req, res) => {

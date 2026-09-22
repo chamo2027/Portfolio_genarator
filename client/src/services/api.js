@@ -55,6 +55,12 @@ export const portfolioAPI = {
     });
     return res.data;
   },
+
+  // Send message to portfolio owner via backend email
+  sendMessage: async (username, messageData) => {
+    const res = await api.post(`/portfolio/${username}/contact`, messageData);
+    return res.data;
+  },
 };
 
 export default api;

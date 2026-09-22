@@ -299,6 +299,64 @@ const checkUsername = async (req, res, next) => {
   }
 };
 
+// @desc    Send contact email to portfolio owner
+// @route   POST /api/portfolio/:username/contact
+// @access  Public
+const sendPortfolioMessage = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const { name, email, company, subject, message } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Please provide your name.' });
+    }
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: 'Please provide your email address.' });
+    }
+    if (!message || !message.trim()) {
+      return res.status(400).json({ success: false, message: 'Please enter a message.' });
+    }
+
+    const cleanUsername = username.toLowerCase().trim();
+    const portfolio = await Portfolio.findOne({ username: cleanUsername });
+
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: `Portfolio with username "${cleanUsername}" was not found.`,
+      });
+    }
+
+    const recipientEmail = portfolio.contact?.email;
+    if (!recipientEmail) {
+      return res.status(400).json({
+        success: false,
+        message: 'This portfolio does not have a contact email configured.',
+      });
+    }
+
+    const { sendContactEmail } = require('../config/mailer');
+    const mailResult = await sendContactEmail({
+      toEmail: recipientEmail,
+      recipientName: portfolio.fullName,
+      senderName: name.trim(),
+      senderEmail: email.trim(),
+      company: company ? company.trim() : '',
+      subject: subject ? subject.trim() : '',
+      message: message.trim(),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Message sent successfully to ${portfolio.fullName}!`,
+      data: mailResult,
+    });
+  } catch (error) {
+    console.error('[Send Message Error]', error);
+    next(error);
+  }
+};
+
 module.exports = {
   createPortfolio,
   getPortfolioByUsername,
@@ -306,4 +364,5 @@ module.exports = {
   deletePortfolio,
   getAllPortfolios,
   checkUsername,
+  sendPortfolioMessage,
 };

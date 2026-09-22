@@ -436,50 +436,22 @@
 }
 
 /* ===================================================
-   MODERN 2-COLUMN CONTACT SECTION SPECIFICATION
+   MODERN CENTERED CONTACT SECTION
    =================================================== */
 
-.pf-contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 2.5rem;
-  align-items: start;
-  margin-top: 1rem;
-}
-
-@media (max-width: 960px) {
-  .pf-contact-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
-.pf-contact-info-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.pf-contact-main-title {
-  font-size: 1.85rem;
-  font-weight: 800;
-  color: var(--pf-text);
-  margin-bottom: 0.75rem;
-}
-
-.pf-contact-main-desc {
-  color: var(--pf-text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+.pf-contact-centered-wrapper {
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .pf-contact-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
-@media (max-width: 580px) {
+@media (max-width: 640px) {
   .pf-contact-cards-grid {
     grid-template-columns: 1fr;
   }
@@ -489,7 +461,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.1rem 1.25rem;
+  padding: 1.15rem 1.35rem;
   background: var(--pf-card);
   border: 1px solid var(--pf-border);
   border-radius: var(--radius-lg, 14px);
@@ -503,10 +475,6 @@
   border-color: var(--pf-border-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.pf-contact-card-item.full-width {
-  grid-column: 1 / -1;
 }
 
 .pf-contact-icon-bubble {
@@ -525,7 +493,6 @@
 
 .pf-contact-card-item:hover .pf-contact-icon-bubble {
   transform: scale(1.08);
-  background: rgba(var(--pf-primary-rgb), 0.15);
 }
 
 .pf-contact-text-wrap {
@@ -555,112 +522,4 @@
   color: var(--pf-primary);
 }
 
-/* Right Message Form Box */
-.pf-message-box-card {
-  background: var(--pf-surface);
-  border: 1px solid var(--pf-border);
-  border-radius: 18px;
-  padding: 2.25rem 2rem;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
-}
-
-.pf-message-header-row {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 1.75rem;
-}
-
-.pf-message-header-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(var(--pf-primary-rgb), 0.18);
-  border: 1px solid var(--pf-border);
-  color: var(--pf-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.pf-message-header-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--pf-text);
-  margin: 0;
-}
-
-.pf-form-double-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.1rem;
-}
-
-@media (max-width: 580px) {
-  .pf-form-double-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-.pf-form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  margin-bottom: 1.1rem;
-}
-
-.pf-form-label-txt {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--pf-text);
-}
-
-.pf-form-label-txt .req-dot {
-  color: #ef4444;
-  margin-left: 2px;
-}
-
-.pf-input-control,
-.pf-textarea-control {
-  width: 100%;
-  background: var(--pf-surface-2);
-  border: 1px solid var(--pf-border);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  color: var(--pf-text);
-  font-size: 0.9rem;
-  font-family: inherit;
-  outline: none;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-.pf-input-control:focus,
-.pf-textarea-control:focus {
-  border-color: var(--pf-primary);
-  box-shadow: 0 0 0 3px rgba(var(--pf-primary-rgb), 0.18);
-}
-
-.pf-input-control::placeholder,
-.pf-textarea-control::placeholder {
-  color: var(--pf-text-muted);
-  opacity: 0.75;
-}
-
-.pf-form-bottom-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.pf-form-sla-text {
-  font-size: 0.82rem;
-  color: var(--pf-text-muted);
-}
 

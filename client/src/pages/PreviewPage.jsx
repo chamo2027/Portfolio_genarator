@@ -15,6 +15,7 @@ import confetti from 'canvas-confetti';
 import { portfolioAPI } from '../services/api';
 import { useToast } from '../components/Toast';
 import PortfolioRenderer from '../components/PortfolioRenderer';
+import PublishSuccessModal from '../components/PublishSuccessModal';
 
 const PreviewPage = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const PreviewPage = () => {
 
   const [deviceView, setDeviceView] = useState('desktop'); // desktop, tablet, mobile
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [publishedData, setPublishedData] = useState(null);
 
   // Read data from route state or sessionStorage draft
   const [draftData, setDraftData] = useState(() => {
@@ -83,9 +85,7 @@ const PreviewPage = () => {
         });
         addToast('Portfolio published live! 🚀', 'success');
         sessionStorage.removeItem('devfolio_draft');
-        setTimeout(() => {
-          navigate(`/portfolio/${res.data.username}`);
-        }, 1200);
+        setPublishedData(res.data);
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to publish portfolio';
@@ -213,6 +213,14 @@ const PreviewPage = () => {
           />
         </div>
       </div>
+
+      {/* Celebratory Post-Publish Success Modal with Shareable URL */}
+      <PublishSuccessModal
+        isOpen={Boolean(publishedData)}
+        onClose={() => setPublishedData(null)}
+        username={publishedData?.username}
+        fullName={publishedData?.fullName}
+      />
     </div>
   );
 };

@@ -120,54 +120,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Interactive Mockup Preview Frame */}
-      <section style={{ paddingBottom: '6rem' }}>
-        <div className="container">
-          <div className="device-preview-wrapper desktop">
-            <div className="preview-bar">
-              <div className="preview-dots">
-                <span className="preview-dot red" />
-                <span className="preview-dot yellow" />
-                <span className="preview-dot green" />
-              </div>
-              <div className="preview-url-pill">
-                <Globe2 size={13} color="var(--primary)" />
-                <span>devfolio.live/portfolio/alexchen</span>
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Live Output Preview
-              </div>
-            </div>
-
-            {/* Mock Header Inside Preview */}
-            <div style={{ padding: '3rem 2rem', background: '#090d16', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ display: 'inline-block', position: 'relative', marginBottom: '1rem' }}>
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                  alt="Avatar"
-                  style={{ width: '88px', height: '88px', borderRadius: '50%', border: '3px solid #6366f1' }}
-                />
-              </div>
-              <h2 style={{ fontSize: '1.85rem', fontWeight: 800, marginBottom: '0.25rem' }}>Alex Chen</h2>
-              <span style={{ display: 'inline-block', background: 'rgba(99, 102, 241, 0.15)', color: '#a5b4fc', padding: '0.25rem 0.85rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1rem' }}>
-                Senior Full Stack Engineer
-              </span>
-              <p style={{ color: '#94a3b8', maxWidth: '540px', margin: '0 auto 1.5rem', fontSize: '0.92rem' }}>
-                Passionate software craftsman with 6+ years of experience engineering high-performance distributed systems and web applications.
-              </p>
-
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {['React', 'TypeScript', 'Node.js', 'MongoDB', 'Docker', 'GraphQL'].map((skill, i) => (
-                  <span key={i} style={{ background: 'rgba(255,255,255,0.05)', color: '#c7d2fe', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.08)' }}>
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* How It Works Section */}
       <section style={{ padding: '5rem 0', background: 'rgba(17, 24, 39, 0.4)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container">
